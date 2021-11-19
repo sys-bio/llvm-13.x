@@ -4,9 +4,9 @@ variables:
   BUILD_LLVM: 'ON'
 
 stages:
-    - stage: BuildLLVM-13.x
+    - stage: BuildLLVM13
       jobs:
-      - job: BuildLLVM-13.xLinux
+      - job: BuildLLVM13Linux
         timeoutInMinutes: "0"
         displayName: Linux
         continueOnError: "false"
@@ -75,7 +75,7 @@ stages:
           - publish: $(Build.ArtifactStagingDirectory)
             artifact: llvm-13.x-$(Agent.OS)-$(BuildType)
 
-      - job: BuildLLVM-13.xWindows
+      - job: BuildLLVM13Windows
         timeoutInMinutes: "0"
         displayName: Windows
         continueOnError: "false"
@@ -146,7 +146,7 @@ stages:
           - publish: $(Build.ArtifactStagingDirectory)
             artifact: llvm-13.x-$(Agent.OS)-$(BuildType)
 
-      - job: BuildLLVM-13.xMac
+      - job: BuildLLVM13Mac
         timeoutInMinutes: "0"
         displayName: MacOS
         continueOnError: "false"
