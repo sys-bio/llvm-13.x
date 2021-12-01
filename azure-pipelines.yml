@@ -16,13 +16,13 @@ stages:
           CCACHE_DIR: '$(Pipeline.Workspace)/ccache'
           BUILD_DIRECTORY: '$(System.DefaultWorkingDirectory)/build'
           SOURCE_DIRECTORY: '$(System.DefaultWorkingDirectory)'
-          INSTALL_DIRECTORY: '$(System.DefaultWorkingDirectory)/install-azure'
+          INSTALL_DIRECTORY: '$(System.DefaultWorkingDirectory)/llvm-13-Ubuntu-gcc10-$(BUILD_DIRECTORY)'
         strategy:
           matrix:
             64-bit Linux Release:
               BuildType: Release
-            64-bit Linux Debug:
-              BuildType: Debug
+            64-bit Linux RelWithDebInfo:
+              BuildType: RelWithDebInfo
         steps:
           - checkout: self
             submodules: recursive
@@ -62,7 +62,7 @@ stages:
           - script: |
               mkdir $(BUILD_DIRECTORY)
               cd $(BUILD_DIRECTORY)
-              cmake -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" -DCMAKE_BUILD_TYPE=$(BuildType)  ../llvm
+              cmake -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)" -DCMAKE_BUILD_TYPE=$(BuildType)  ../llvm
             displayName: ConfigureCommand
           - script: |
               cd $(BUILD_DIRECTORY)
@@ -85,13 +85,13 @@ stages:
           CCACHE_DIR: '$(Pipeline.Workspace)/ccache'
           SOURCE_DIRECTORY: '$(System.DefaultWorkingDirectory)'
           BUILD_DIRECTORY: '$(SOURCE_DIRECTORY)\build'
-          INSTALL_DIRECTORY: '$(SOURCE_DIRECTORY)\install-azure'
+          INSTALL_DIRECTORY: '$(SOURCE_DIRECTORY)\llvm-13-win32-mscv2019-$(BUILD_DIRECTORY)'
         strategy:
           matrix:
             64-bit Windows Release:
               BuildType: Release
-            64-bit Windows Debug:
-              BuildType: Debug
+            64-bit Windows RelWithDebInfo:
+              BuildType: RelWithDebInfo
 
         steps:
           - checkout: self
@@ -156,15 +156,15 @@ stages:
           CCACHE_DIR: '$(Pipeline.Workspace)/ccache'
           BUILD_DIRECTORY: '$(System.DefaultWorkingDirectory)/build'
           SOURCE_DIRECTORY: '$(System.DefaultWorkingDirectory)'
-          INSTALL_DIRECTORY: '$(System.DefaultWorkingDirectory)/install-azure'
+          INSTALL_DIRECTORY: '$(System.DefaultWorkingDirectory)/llvm-13-macos10.15-$(BUILD_DIRECTORY)'
         strategy:
           matrix:
             64-bit Mac Release:
               BuildType: Release
               CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-release"
-            64-bit Mac Debug:
-              BuildType: Debug
-              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-debug"
+            64-bit Mac RelWithDebInfo:
+              BuildType: RelWithDebInfo
+              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-RelWithDebInfo"
 
         steps:
           - checkout: self
@@ -205,7 +205,7 @@ stages:
           - script: |
               mkdir $(BUILD_DIRECTORY)
               cd $(BUILD_DIRECTORY)
-              cmake -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" -DCMAKE_BUILD_TYPE=$(BuildType)  ../llvm
+              cmake -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)" -DCMAKE_BUILD_TYPE=$(BuildType)  ../llvm
             displayName: ConfigureCommand
           - script: |
               cd $(BUILD_DIRECTORY)
