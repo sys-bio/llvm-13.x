@@ -21,8 +21,8 @@ stages:
           matrix:
             64-bit Linux Release:
               BuildType: Release
-            64-bit Linux RelWithDebInfo:
-              BuildType: RelWithDebInfo
+            64-bit Linux Debug:
+              BuildType: Debug
         steps:
           - checkout: self
             submodules: recursive
@@ -92,7 +92,8 @@ stages:
               BuildType: Release
             64-bit Windows RelWithDebInfo:
               BuildType: RelWithDebInfo
-
+            64-bit Windows Debug:
+              BuildType: Debug
         steps:
           - checkout: self
             submodules: recursive
@@ -139,6 +140,14 @@ stages:
               cd $(BUILD_DIRECTORY)
               cmake --build . --target install --config $(BuildType) -j 12
             displayName: BuildCommand
+          - script: |
+              cd $(INSTALL_DIRECTORY)/$(BuildType)
+              mv bin/llvm-config.exe .
+              rm -r bin
+              mkdir bin
+              mv llvm-config.exe bin
+              tree /f
+            displayName: RemoveExtraExecutables
           - task: CopyFiles@2
             inputs:
               contents: '$(INSTALL_DIRECTORY)/$(BuildType)/**'
@@ -161,11 +170,8 @@ stages:
           matrix:
             64-bit Mac Release:
               BuildType: Release
-              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-release"
-            64-bit Mac RelWithDebInfo:
-              BuildType: RelWithDebInfo
-              CMakeArgs: "-DCMAKE_INSTALL_PREFIX=../install-azure-RelWithDebInfo"
-
+            64-bit Mac Debug:
+              BuildType: Debug
         steps:
           - checkout: self
             submodules: recursive
@@ -211,6 +217,14 @@ stages:
               cd $(BUILD_DIRECTORY)
               cmake --build . --target install --config $(BuildType) -j 12
             displayName: BuildCommand
+          - script: |
+              cd $(INSTALL_DIRECTORY)/$(BuildType)
+              mv bin/llvm-config* .
+              rm -r bin
+              mkdir bin
+              mv llvm-config* bin
+              tree /f
+            displayName: RemoveExtraExecutables
           - task: CopyFiles@2
             inputs:
               contents: '$(INSTALL_DIRECTORY)/$(BuildType)/**'
