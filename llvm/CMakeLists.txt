@@ -38,7 +38,8 @@ endif()
 if (CMAKE_GENERATOR STREQUAL "Xcode" AND NOT CMAKE_OSX_ARCHITECTURES)
   # Some CMake features like object libraries get confused if you don't
   # explicitly specify an architecture setting with the Xcode generator.
-  set(CMAKE_OSX_ARCHITECTURES "x86_64")
+  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
+  message(STATUS "building on mac with universal binaries")
 endif()
 
 project(LLVM
