@@ -35,13 +35,15 @@ if ((CMAKE_GENERATOR MATCHES "Visual Studio") AND (CMAKE_GENERATOR_TOOLSET STREQ
                   "host compiler, pass -Thost=x64 on the CMake command line.")
 endif()
 
-if (APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
-  # Some CMake features like object libraries get confused if you don't
-  # explicitly specify an architecture setting with the Xcode generator.
-  #    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
-  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE INTERNAL "Compile for intel and M1 chips on apple" FORCE)
-  message(STATUS "building on mac with universal binaries")
+set(USE_UNIVERSAL_BINARIES "ON" CACHE BOOL "Build and link to universal binaries on MacOS")
+
+if (USE_UNIVERSAL_BINARIES)
+    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE INTERNAL "Compile for intel and M1 chips on apple" FORCE)
+    message(STATUS "building on mac with universal binaries")
 endif()
+
+# Enable cmake printing out commands
+set(CMAKE_VERBOSE_MAKEFILE TRUE)
 
 project(LLVM
   VERSION ${LLVM_VERSION_MAJOR}.${LLVM_VERSION_MINOR}.${LLVM_VERSION_PATCH}
