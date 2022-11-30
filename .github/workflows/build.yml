@@ -1,0 +1,61 @@
+name: build
+
+on:
+  push:
+    branches: [ release,  ]
+
+  pull_request:
+    branches: [ release ]
+
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: Build LLVM on ${{ matrix.os }} with ${{ matrix.compiler }}.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos11]
+        include:
+          - os: ubuntu-latest
+            compiler: g++-10
+            target: Linux
+
+          - os: macos11
+            compiler: g++-10
+            target: Macos
+
+          - os: windows-latest
+            compiler: cl
+            target: Windows
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Add msbuild to PATH
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Build
+        run: cd llvm
+          mkdir build
+          cd build
+          cmake -DCMAKE_INSTALL_PREFIX="../install" -DCMAKE_BUILD_TYPE=Release ..
+
+      - name: Install and zip
+        run: cd llvm
+          make
+          make install
+          cd ../install
+          zip -r ${{ matrix.os }}.zip *
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: MacOS-dist
+          path: llvm/*zip
