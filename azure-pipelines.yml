@@ -11,12 +11,12 @@ stages:
         displayName: Linux
         continueOnError: "false"
         pool:
-          vmImage: "ubuntu-18.04"
+          vmImage: "ubuntu-20.04"
         variables:
           CCACHE_DIR: '$(Pipeline.Workspace)/ccache'
           BUILD_DIRECTORY: '$(System.DefaultWorkingDirectory)/build'
           SOURCE_DIRECTORY: '$(System.DefaultWorkingDirectory)'
-          INSTALL_DIRECTORY: '$(System.DefaultWorkingDirectory)/llvm-13-Ubuntu-gcc10-$(BUILD_DIRECTORY)'
+          INSTALL_DIRECTORY: '$(System.DefaultWorkingDirectory)/llvm-13-Ubuntu-gcc10-install'
         strategy:
           matrix:
             64-bit Linux Release:
@@ -60,9 +60,20 @@ stages:
               echo "TF_BUILD $(TF_BUILD)"
             displayName: Print Variables
           - script: |
+              echo "gcc $(gcc --version)"
+              echo "g++ $(g++ --version)"
+              sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+              sudo apt-get update
+              sudo apt-get install -y gcc-10 g++-10
+              sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 1
+              sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 1
+              echo "gcc $(gcc --version)"
+              echo "g++ $(g++ --version)"
+            displayName: Install g++10
+          - script: |
               mkdir $(BUILD_DIRECTORY)
               cd $(BUILD_DIRECTORY)
-              cmake -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)" -DCMAKE_BUILD_TYPE=$(BuildType)  ../llvm
+              cmake -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" -DCMAKE_BUILD_TYPE=$(BuildType) ../llvm
             displayName: ConfigureCommand
           - script: |
               cd $(BUILD_DIRECTORY)
@@ -85,7 +96,7 @@ stages:
           CCACHE_DIR: '$(Pipeline.Workspace)/ccache'
           SOURCE_DIRECTORY: '$(System.DefaultWorkingDirectory)'
           BUILD_DIRECTORY: '$(SOURCE_DIRECTORY)\build'
-          INSTALL_DIRECTORY: '$(SOURCE_DIRECTORY)\llvm-13-win32-mscv2019-$(BUILD_DIRECTORY)'
+          INSTALL_DIRECTORY: '$(SOURCE_DIRECTORY)\llvm-13-win32-mscv2019-install'
         strategy:
           matrix:
             64-bit Windows Release:
@@ -134,7 +145,7 @@ stages:
           - powershell: |
               mkdir $(BUILD_DIRECTORY)
               cd $(BUILD_DIRECTORY)
-              cmake -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" -DCMAKE_BUILD_TYPE=$(BuildType)  ../llvm
+              cmake -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" -DCMAKE_BUILD_TYPE=$(BuildType) ../llvm
             displayName: ConfigureCommand
           - powershell: |
               cd $(BUILD_DIRECTORY)
@@ -160,12 +171,12 @@ stages:
         displayName: MacOS
         continueOnError: "false"
         pool:
-          vmImage: 'macOS-10.15'
+          vmImage: 'macOS-11'
         variables:
           CCACHE_DIR: '$(Pipeline.Workspace)/ccache'
           BUILD_DIRECTORY: '$(System.DefaultWorkingDirectory)/build'
           SOURCE_DIRECTORY: '$(System.DefaultWorkingDirectory)'
-          INSTALL_DIRECTORY: '$(System.DefaultWorkingDirectory)/llvm-13-macos10.15-$(BUILD_DIRECTORY)'
+          INSTALL_DIRECTORY: '$(System.DefaultWorkingDirectory)/llvm-13-macos10.15-install'
         strategy:
           matrix:
             64-bit Mac Release:
@@ -211,7 +222,7 @@ stages:
           - script: |
               mkdir $(BUILD_DIRECTORY)
               cd $(BUILD_DIRECTORY)
-              cmake -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)" -DCMAKE_BUILD_TYPE=$(BuildType)  ../llvm
+              cmake -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" -DCMAKE_BUILD_TYPE=$(BuildType)  ../llvm
             displayName: ConfigureCommand
           - script: |
               cd $(BUILD_DIRECTORY)
