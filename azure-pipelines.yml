@@ -103,8 +103,8 @@ stages:
               BuildType: Release
             64-bit Windows RelWithDebInfo:
               BuildType: RelWithDebInfo
-            64-bit Windows Debug:
-              BuildType: Debug
+            #64-bit Windows Debug:
+            #  BuildType: Debug
         steps:
           - checkout: self
             submodules: recursive
