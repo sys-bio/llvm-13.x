@@ -69,11 +69,12 @@ stages:
               sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 1
               echo "gcc $(gcc --version)"
               echo "g++ $(g++ --version)"
-            displayName: Install g++10
+              sudo apt-get install -y ninja-build
+            displayName: Install g++10 and Ninja
           - script: |
               mkdir $(BUILD_DIRECTORY)
               cd $(BUILD_DIRECTORY)
-              cmake -G Ninja -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" -DCMAKE_BUILD_TYPE=$(BuildType) ../llvm
+              cmake -G Ninja -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" -DCMAKE_BUILD_TYPE=$(BuildType) -DLLVM_PARALLEL_LINK_JOBS=1 ../llvm
             displayName: ConfigureCommand
           - script: |
               cd $(BUILD_DIRECTORY)
