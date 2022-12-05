@@ -73,7 +73,7 @@ stages:
           - script: |
               mkdir $(BUILD_DIRECTORY)
               cd $(BUILD_DIRECTORY)
-              cmake -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" -DCMAKE_BUILD_TYPE=$(BuildType) ../llvm
+              cmake -G Ninja -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" -DCMAKE_BUILD_TYPE=$(BuildType) -DLLVM_BUILD_LLVM_DYLIB=ON -DLLVM_ENABLE_RTTI=ON ../llvm
             displayName: ConfigureCommand
           - script: |
               cd $(BUILD_DIRECTORY)
