@@ -21,8 +21,8 @@ stages:
           matrix:
             64-bit Linux Release:
               BuildType: Release
-            64-bit Linux Debug:
-              BuildType: Debug
+            #64-bit Linux Debug:
+            #  BuildType: Debug
         steps:
           - checkout: self
             submodules: recursive
@@ -74,7 +74,7 @@ stages:
           - script: |
               mkdir $(BUILD_DIRECTORY)
               cd $(BUILD_DIRECTORY)
-              cmake -G Ninja -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" -DCMAKE_BUILD_TYPE=$(BuildType) -DLLVM_PARALLEL_LINK_JOBS=1 ../llvm
+              cmake -G Ninja -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)/$(BuildType)" -DCMAKE_BUILD_TYPE=$(BuildType) ../llvm
             displayName: ConfigureCommand
           - script: |
               cd $(BUILD_DIRECTORY)
@@ -102,8 +102,8 @@ stages:
           matrix:
             64-bit Windows Release:
               BuildType: Release
-            64-bit Windows RelWithDebInfo:
-              BuildType: RelWithDebInfo
+            #64-bit Windows RelWithDebInfo:
+            #  BuildType: RelWithDebInfo
             #64-bit Windows Debug:
             #  BuildType: Debug
         steps:
@@ -182,8 +182,8 @@ stages:
           matrix:
             64-bit Mac Release:
               BuildType: Release
-            64-bit Mac Debug:
-              BuildType: Debug
+            #64-bit Mac Debug:
+            #  BuildType: Debug
         steps:
           - checkout: self
             submodules: recursive
@@ -224,7 +224,6 @@ stages:
               echo "installing tree"
               brew install tree
             displayName: Install tree
-            condition: ne(variables.SWIG_CACHE, 'true')
           - script: |
               mkdir $(BUILD_DIRECTORY)
               cd $(BUILD_DIRECTORY)
@@ -240,7 +239,7 @@ stages:
               rm -r bin
               mkdir bin
               mv llvm-config* bin
-              tree /f
+              tree -f
             displayName: RemoveExtraExecutables
           - task: CopyFiles@2
             inputs:
