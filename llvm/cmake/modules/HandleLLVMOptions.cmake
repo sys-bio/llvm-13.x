@@ -316,12 +316,11 @@ if( LLVM_ENABLE_PIC )
     # Note: GCC<10.3 has a bug on SystemZ.
     #
     # Note: Clang allows IPO for -fPIC so this optimization is less effective.
-    # Older Clang may support -fno-semantic-interposition but it used local
-    # aliases to optimize global variables, which is incompatible with copy
-    # relocations due to -fno-pic.
+    # Clang 13 has a bug related to -fsanitize-coverage
+    # -fno-semantic-interposition (https://reviews.llvm.org/D117183).
     if ((CMAKE_COMPILER_IS_GNUCXX AND
          NOT (LLVM_NATIVE_ARCH STREQUAL "SystemZ" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 10.3))
-       OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION GREATER_EQUAL 13))
+       OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND CMAKE_CXX_COMPILER_VERSION GREATER_EQUAL 14))
       add_flag_if_supported("-fno-semantic-interposition" FNO_SEMANTIC_INTERPOSITION)
     endif()
   endif()
@@ -958,8 +957,8 @@ if(MSVC)
 endif()
 
 # Provide public options to globally control RTTI and EH
-option(LLVM_ENABLE_EH "Enable Exception handling" ON)
-option(LLVM_ENABLE_RTTI "Enable run time type information" ON)
+option(LLVM_ENABLE_EH "Enable Exception handling" OFF)
+option(LLVM_ENABLE_RTTI "Enable run time type information" OFF)
 if(LLVM_ENABLE_EH AND NOT LLVM_ENABLE_RTTI)
   message(FATAL_ERROR "Exception handling requires RTTI. You must set LLVM_ENABLE_RTTI to ON")
 endif()

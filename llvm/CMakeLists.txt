@@ -35,12 +35,10 @@ if ((CMAKE_GENERATOR MATCHES "Visual Studio") AND (CMAKE_GENERATOR_TOOLSET STREQ
                   "host compiler, pass -Thost=x64 on the CMake command line.")
 endif()
 
-if (APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
+if (CMAKE_GENERATOR STREQUAL "Xcode" AND NOT CMAKE_OSX_ARCHITECTURES)
   # Some CMake features like object libraries get confused if you don't
   # explicitly specify an architecture setting with the Xcode generator.
-  #    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
-  set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE INTERNAL "Compile for intel and M1 chips on apple" FORCE)
-  message(STATUS "building on mac with universal binaries")
+  set(CMAKE_OSX_ARCHITECTURES "x86_64")
 endif()
 
 project(LLVM
@@ -372,7 +370,7 @@ else()
   option(LLVM_ENABLE_THREADS "Use threads if available." ON)
 endif()
 
-set(LLVM_ENABLE_ZLIB "OFF" CACHE STRING "Use zlib for compression/decompression if available. Can be ON, OFF, or FORCE_ON")
+set(LLVM_ENABLE_ZLIB "ON" CACHE STRING "Use zlib for compression/decompression if available. Can be ON, OFF, or FORCE_ON")
 
 set(LLVM_Z3_INSTALL_DIR "" CACHE STRING "Install directory of the Z3 solver.")
 
@@ -549,19 +547,19 @@ option(LLVM_INCLUDE_TOOLS "Generate build targets for the LLVM tools." ON)
 option(LLVM_BUILD_TOOLS
   "Build the LLVM tools. If OFF, just generate build targets." ON)
 
-option(LLVM_INCLUDE_UTILS "Generate build targets for the LLVM utils." OFF)
+option(LLVM_INCLUDE_UTILS "Generate build targets for the LLVM utils." ON)
 option(LLVM_BUILD_UTILS
-  "Build LLVM utility binaries. If OFF, just generate build targets." OFF)
+  "Build LLVM utility binaries. If OFF, just generate build targets." ON)
 
-option(LLVM_INCLUDE_RUNTIMES "Generate build targets for the LLVM runtimes." OFF)
+option(LLVM_INCLUDE_RUNTIMES "Generate build targets for the LLVM runtimes." ON)
 option(LLVM_BUILD_RUNTIMES
-  "Build the LLVM runtimes. If OFF, just generate build targets." OFF)
+  "Build the LLVM runtimes. If OFF, just generate build targets." ON)
 
 option(LLVM_BUILD_RUNTIME
   "Build the LLVM runtime libraries." ON)
 option(LLVM_BUILD_EXAMPLES
   "Build the LLVM example programs. If OFF, just generate build targets." OFF)
-option(LLVM_INCLUDE_EXAMPLES "Generate build targets for the LLVM examples" OFF)
+option(LLVM_INCLUDE_EXAMPLES "Generate build targets for the LLVM examples" ON)
 
 if(LLVM_BUILD_EXAMPLES)
   add_definitions(-DBUILD_EXAMPLES)
@@ -569,18 +567,18 @@ endif(LLVM_BUILD_EXAMPLES)
 
 option(LLVM_BUILD_TESTS
   "Build LLVM unit tests. If OFF, just generate build targets." OFF)
-option(LLVM_INCLUDE_TESTS "Generate build targets for the LLVM unit tests." OFF)
-option(LLVM_INCLUDE_GO_TESTS "Include the Go bindings tests in test build targets." OFF)
+option(LLVM_INCLUDE_TESTS "Generate build targets for the LLVM unit tests." ON)
+option(LLVM_INCLUDE_GO_TESTS "Include the Go bindings tests in test build targets." ON)
 
 option(LLVM_BUILD_BENCHMARKS "Add LLVM benchmark targets to the list of default
 targets. If OFF, benchmarks still could be built using Benchmarks target." OFF)
-option(LLVM_INCLUDE_BENCHMARKS "Generate benchmark targets. If OFF, benchmarks can't be built." OFF)
+option(LLVM_INCLUDE_BENCHMARKS "Generate benchmark targets. If OFF, benchmarks can't be built." ON)
 
 option (LLVM_BUILD_DOCS "Build the llvm documentation." OFF)
-option (LLVM_INCLUDE_DOCS "Generate build targets for llvm documentation." OFF)
+option (LLVM_INCLUDE_DOCS "Generate build targets for llvm documentation." ON)
 option (LLVM_ENABLE_DOXYGEN "Use doxygen to generate llvm API documentation." OFF)
 option (LLVM_ENABLE_SPHINX "Use Sphinx to generate llvm documentation." OFF)
-option (LLVM_ENABLE_OCAMLDOC "Build OCaml bindings documentation." OFF)
+option (LLVM_ENABLE_OCAMLDOC "Build OCaml bindings documentation." ON)
 option (LLVM_ENABLE_BINDINGS "Build bindings." ON)
 
 set(LLVM_INSTALL_DOXYGEN_HTML_DIR "share/doc/llvm/doxygen-html"
@@ -624,7 +622,7 @@ if (LLVM_LINK_LLVM_DYLIB AND BUILD_SHARED_LIBS)
   message(FATAL_ERROR "Cannot enable BUILD_SHARED_LIBS with LLVM_LINK_LLVM_DYLIB.  We recommend disabling BUILD_SHARED_LIBS.")
 endif()
 
-option(LLVM_OPTIMIZED_TABLEGEN "Force TableGen to be built with optimization" ON)
+option(LLVM_OPTIMIZED_TABLEGEN "Force TableGen to be built with optimization" OFF)
 if(CMAKE_CROSSCOMPILING OR (LLVM_OPTIMIZED_TABLEGEN AND (LLVM_ENABLE_ASSERTIONS OR CMAKE_CONFIGURATION_TYPES)))
   set(LLVM_USE_HOST_TOOLS ON)
 endif()
