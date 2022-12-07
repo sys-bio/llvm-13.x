@@ -111,8 +111,8 @@ stages:
           matrix:
             64-bit Windows Release:
               BuildType: Release
-            #64-bit Windows RelWithDebInfo:
-            #  BuildType: RelWithDebInfo
+            64-bit Windows RelWithDebInfo:
+              BuildType: RelWithDebInfo
             #64-bit Windows Debug:
             #  BuildType: Debug
         steps:
