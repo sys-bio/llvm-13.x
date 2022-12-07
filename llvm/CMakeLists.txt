@@ -38,7 +38,6 @@ endif()
 if (APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
   # Some CMake features like object libraries get confused if you don't
   # explicitly specify an architecture setting with the Xcode generator.
-  #    set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
   set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64" CACHE INTERNAL "Compile for intel and M1 chips on apple" FORCE)
   message(STATUS "building on mac with universal binaries")
 endif()
