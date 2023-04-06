@@ -1659,6 +1659,8 @@ void X86FrameLowering::emitPrologue(MachineFunction &MF,
       }
     }
 
+    MachineInstrBuilder MIB;
+      
     if (Is64Bit) {
       // Handle the 64-bit Windows ABI case where we need to call __chkstk.
       // Function prologue is responsible for adjusting the stack pointer.
@@ -1675,6 +1677,17 @@ void X86FrameLowering::emitPrologue(MachineFunction &MF,
         BuildMI(MBB, MBBI, DL, TII.get(X86::MOV64ri), X86::RAX)
             .addImm(Alloc)
             .setMIFlag(MachineInstr::FrameSetup);
+          
+        const char *StackProbeSymbol = STI.isTargetCygMing() ? "___chkstk" : "__chkstk";
+        if (MF.getTarget().getCodeModel() == CodeModel::Large) {
+            BuildMI(MBB, MBBI, DL, TII.get(X86::MOV64ri), X86::R11)
+                .addExternalSymbol(StackProbeSymbol);
+            MIB = BuildMI(MBB, MBBI, DL, TII.get(X86::CALL64r))
+                .addReg(X86::R11, RegState::Kill);
+        }
+        else
+            MIB = BuildMI(MBB, MBBI, DL, TII.get(X86::CALL64pcrel32))
+                .addExternalSymbol(StackProbeSymbol);
       }
     } else {
       // Allocate NumBytes-4 bytes on stack in case of isEAXAlive.
@@ -1682,7 +1695,14 @@ void X86FrameLowering::emitPrologue(MachineFunction &MF,
       BuildMI(MBB, MBBI, DL, TII.get(X86::MOV32ri), X86::EAX)
           .addImm(isEAXAlive ? NumBytes - 4 : NumBytes)
           .setMIFlag(MachineInstr::FrameSetup);
+      const char *StackProbeSymbol = STI.isTargetCygMing() ? "___chkstk" : "__chkstk";
+      MIB = BuildMI(MBB, MBBI, DL, TII.get(X86::CALLpcrel32))
+              .addExternalSymbol(StackProbeSymbol);
     }
+      
+    MIB.addReg(StackPtr,    RegState::Define | RegState::Implicit)
+        .addReg(X86::EFLAGS, RegState::Define | RegState::Implicit)
+        .setMIFlag(MachineInstr::FrameSetup);
 
     // Call __chkstk, __chkstk_ms, or __alloca.
     emitStackProbe(MF, MBB, MBBI, DL, true);

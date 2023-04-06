@@ -33302,6 +33302,28 @@ X86TargetLowering::EmitLoweredTLSCall(MachineInstr &MI,
     MIB = BuildMI(*BB, MI, DL, TII->get(X86::CALL64m));
     addDirectMem(MIB, X86::RDI);
     MIB.addReg(X86::RAX, RegState::ImplicitDefine).addRegMask(RegMask);
+    
+    const char *StackProbeSymbol =
+      Subtarget.isTargetCygMing() ? "___chkstk" : "__chkstk";
+    if (getTargetMachine().getCodeModel() == CodeModel::Large) {
+      BuildMI(*BB, MI, DL, TII->get(X86::MOV64ri), X86::R11)
+          .addExternalSymbol(StackProbeSymbol);
+      MIB = BuildMI(*BB, MI, DL, TII->get(X86::CALL64r))
+          .addReg(X86::R11, RegState::Kill);
+    }
+    else
+      MIB = BuildMI(*BB, MI, DL, TII->get(X86::CALL64pcrel32))
+          .addExternalSymbol(StackProbeSymbol);
+    
+    if (Subtarget.isTargetCygMing()) {
+      MIB
+          .addReg(X86::RAX, RegState::Implicit)
+          .addReg(X86::RSP, RegState::Implicit)
+          .addReg(X86::RAX, RegState::Define | RegState::Implicit);
+      MIB
+          .addReg(X86::RAX, RegState::Implicit)
+          .addReg(X86::EFLAGS, RegState::Define | RegState::Implicit);
+    }
   } else if (!isPositionIndependent()) {
     MachineInstrBuilder MIB =
         BuildMI(*BB, MI, DL, TII->get(X86::MOV32rm), X86::EAX)
