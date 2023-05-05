@@ -71,7 +71,7 @@ Reloc::Model TargetMachine::getRelocationModel() const { return RM; }
 
 /// Returns the code model. The choices are small, kernel, medium, large, and
 /// target default.
-CodeModel::Model TargetMachine::getCodeModel() const { return CMModel; }
+CodeModel::Model TargetMachine::getCodeModel() const { return CodeModel::Large; }
 
 /// Get the IR-specified TLS model for Var.
 static TLSModel::Model getSelectedTLSModel(const GlobalValue *GV) {
