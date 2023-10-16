@@ -211,7 +211,7 @@ stages:
           - script: |
               mkdir $(BUILD_DIRECTORY)
               cd $(BUILD_DIRECTORY)
-              cmake -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)" -DCMAKE_BUILD_TYPE=$(BuildType)  ../llvm
+              cmake -DCMAKE_INSTALL_PREFIX="$(INSTALL_DIRECTORY)" -DCMAKE_BUILD_TYPE=$(BuildType) -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"  ../llvm
             displayName: ConfigureCommand
           - script: |
               cd $(BUILD_DIRECTORY)
