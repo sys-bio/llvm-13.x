@@ -6,7 +6,7 @@ on:
       - release/13.x
   pull_request:
     branches:
-      - '*'
+      - '**'
 
 jobs:
   build_on_OSs:
