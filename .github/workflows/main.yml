@@ -146,13 +146,13 @@ jobs:
           -DCMAKE_OSX_ARCHITECTURES=${{ matrix.platform.arch }} \
           -DCMAKE_INSTALL_PREFIX="${RUNNER_WORKSPACE}/install-llvm"
 
-      - name: Build and Install LLVM
+      - name: Build and install LLVM
         shell: bash
         run: |
           cd ${RUNNER_WORKSPACE}/build-llvm
           cmake --build . --target install --config ${{ matrix.platform.build_type }}
 
-      - name: Give Execute permissions to llvm binaries
+      - name: Give Execute permissions to LLVM binaries
         shell: bash
         run: |
           cd ${RUNNER_WORKSPACE}
@@ -167,7 +167,7 @@ jobs:
           # we need to use relative path as actions/upload-artifact@v1 cannot find it on containerized runners
           echo "artifacts_path=../install-llvm" >> "${GITHUB_ENV}"
 
-      - name: Upload llvm binaries
+      - name: Upload LLVM binaries
         uses: actions/upload-artifact@v1
         with:
           name: ${{env.artifacts_name}}
