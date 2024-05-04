@@ -1,1 +1,1 @@
-Github action workflows should be stored in this directrory.
+Original LLVM GitHub Actions workflows are all removed as we didn't want to run them in this repository.
