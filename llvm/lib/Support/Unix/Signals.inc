@@ -331,13 +331,16 @@ static void RegisterHandlers() { // Not signal-safe.
     registerHandler(S, SignalKind::IsInfo);
 }
 
-void sys::unregisterHandlers() {
+
+namespace llvm::sys {
+void unregisterHandlers() {
   // Restore all of the signal handlers to how they were before we showed up.
   for (unsigned i = 0, e = NumRegisteredSignals.load(); i != e; ++i) {
     sigaction(RegisteredSignalInfo[i].SigNo,
               &RegisteredSignalInfo[i].SA, nullptr);
     --NumRegisteredSignals;
   }
+}
 }
 
 /// Process the FilesToRemove list.
