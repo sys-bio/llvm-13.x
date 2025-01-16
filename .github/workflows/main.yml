@@ -205,7 +205,7 @@ jobs:
           echo "artifacts_path=../install-llvm" >> "${GITHUB_ENV}"
 
       - name: Upload LLVM binaries
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: ${{env.artifacts_name}}
           path: ${{env.artifacts_path}}
