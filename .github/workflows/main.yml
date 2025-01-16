@@ -15,13 +15,13 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-          - name: macos-12-release
+          - name: macos-13-release
             os_type: macos
-            os_name: macos-12
+            os_name: macos-13
             build_type: Release
-          - name: macos-12-debug
+          - name: macos-13-debug
             os_type: macos
-            os_name: macos-12
+            os_name: macos-13
             build_type: Debug
           - name: macos-latest-release
             os_type: macos
@@ -202,10 +202,10 @@ jobs:
             os_name_without_build_type="${os_name%%-*}"
             echo "artifacts_name=llvm-13.x-${os_name_without_build_type}-${host_architecture}-${{ matrix.platform.build_type }}" >> "${GITHUB_ENV}"
           fi
-          echo "artifacts_path=../install-llvm" >> "${GITHUB_ENV}"
+          echo "artifacts_path=${RUNNER_WORKSPACE}/install-llvm" >> "${GITHUB_ENV}"
 
       - name: Upload LLVM binaries
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: ${{env.artifacts_name}}
           path: ${{env.artifacts_path}}
